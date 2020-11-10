@@ -1,0 +1,129 @@
+{% from 'macros.html' import img_modal %}
+{% from 'macros.html' import replace_null %}
+{% extends 'base.html' %}
+{% block content %}
+<div class="jumbotron jumbotron-fluid text-white mb-0" id="search-jumbo">
+    <div class="container text-backdrop-dark" >
+      <h1 class="display-4">Search Plants</h1>
+      <p class="lead">You can find any plants by seaching their common name, species, or family. Besides you can use filter to narrow down the number of results. Don't forget there are almost one million plants available. Click the scientific name to see more details about the plant and add it to your Plant Lists!</p>
+    </div>
+</div>
+<div class="container">
+
+<hr>
+
+<!-- You can search any plants that are available in the API treflo.io -->
+<form id="plant-form">
+    {{ form.hidden_tag() }}
+   
+    <!-- Filters button -->
+
+    <button class="btn btn-primary my-2 " type="button" data-toggle="collapse" data-target="#filtersCollapse" aria-expanded="false" aria-controls="filtersCollapse">
+        Show Filters
+    </button>
+
+    <!-- Area for filter fields -->
+    <div class="container collapse" id="filtersCollapse">
+        <div class="row my-1"><small>To select multiple options of the same search filter, hold CTRL and click the desired options. To remove a selected option hold CTRL and click on the selected option.</small></div>
+        <div class="row">
+        {% for field in form if field.widget.input_type != 'hidden' %}
+            {% if field.type == 'SelectMultipleField' %}
+            <div class="col-3 p-2">
+                <b>{{field.label}}</b>
+                {% for err in field.errors %}
+                    <small class="form-text text-danger">
+                        {{err}}
+                    </small>
+                {% endfor %}
+                {{field(class_="form-control")}}                
+            </div>
+            {% endif %}
+        {% endfor %}
+            <div class="col-3">
+                <div class="form-check mt-5">
+                    {{form.vegetable(class_="form-check-input") }}
+                    <b><label for="vegetable" class="form-check-label">{{ form.vegetable.label.text|safe }}</label></b>
+                </div>
+                <div  class="form-check mt-3">
+                    {{form.evergreen(class_="form-check-input") }}
+                    <b><label for="evergreen" class="form-check-label">{{ form.evergreen.label.text|safe }}</label></b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Search Bar -->
+     <div class="form-group row mt-4">
+        <b>{{form.search.label(class_="col-sm-2 col-form-label")}}</b>
+        <div class="col-sm-10">
+        {{form.search(class_="form-control")}}
+        </div>
+    </div>
+<button class="btn btn-primary btn-lg btn-block my-3">Search Plants</button>
+</form>
+
+<!-- Search Results Table -->
+<table id="plant-table" class="table table-striped my-3 table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Common Name</th>
+            <th scope="col">Scientific Name</th>
+            <th scope="col">Family</th>
+            <th scope="col">Image</th>
+        </tr>
+    </thead>
+    <tbody id="plant-table-body">
+
+    {% for plant in plantlist %}
+    <tr>
+        <td>
+            <!-- Despite success in other areas, I cannot seem to replace of the null value here -->
+            {% if (plant['common_name'] is not none and plant['common_name'] != null and plant['common_name'] != 'null' and plant['common_name'] != 'None') %}
+                {{plant['common_name']|replace('null', 'No data available')}}
+            {% else %}
+                <i>No data available</i> 
+            {% endif %}
+            
+        </td>
+        <td><a href="{{url_for('plant_profile', plant_slug=plant['slug'])}}"><i>{{plant['scientific_name']}}</i></a></td>
+        <td>{{plant['family_common_name']}}</td>
+        <td>
+        <!-- Thumbnail triggers img_modal -->
+        <a type="button" data-toggle="modal" data-target="#{{plant['slug']}}-modal">
+            <img id="table-plant-img" class="img-thumbnail" src="{% if plant['image_url'] == None %}/static/images/default-plant-pic.png{% else %}{{plant['image_url']}}{% endif %}" alt="{{plant['common_name']}} image">
+        </a>
+        </td>
+        <!-- Creates image modal connected to plant image thumbnails -->
+        {{img_modal(plant)}}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div id="no-results" class="container">
+</div>
+
+<!-- Pagination -->
+<nav aria-label="search results pagination">
+    <ul class="pagination justify-content-center">
+      <li id="page-first" class="page-item{% if not links.prev %} disabled{% endif %}">
+        <a class="page-link" data-page="{{links.first}}">First</a>
+      </li>
+      <li id="page-prev" class="page-item{% if not links.prev %} disabled{% endif %}" >
+        <a class="page-link" data-page="{{links.prev}}">Prev</a>
+      </li>
+      <li id="page-next" class="page-item{% if not links.next %} disabled{% endif %}"><a class="page-link" data-page="{{links.next}}">Next</a></li>
+   
+      <li id="page-last" class="page-item{% if not links.next %} disabled{% endif %}">
+        <a class="page-link" data-page="{{links.last}}">Last</a>
+      </li>
+    </ul>
+</nav>
+
+
+
+{% endblock %}
+{% block code %}
+<script src="/static/plantSearch.js"></script>
+<script src="/static/pagination.js"></script>
+{% endblock %}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/37f4ac9872.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='stylesheets/style.css')}}">
+    
+    <title>Plant Systems</title>
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="{{url_for('homepage')}}"><i class="fas fa-seedling mr-2"></i>Plant Systems</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('about')}}">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('plants_search_table')}}">Search Plants</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle {% if not g.user %} disabled {% endif %}" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Create
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{{url_for('add_projects')}}">Create Project</a> 
+            <a class="dropdown-item" href="{{url_for('add_plots')}}">Create Plot</a>
+            <a class="dropdown-item" href="{{url_for('add_plantlists')}}">Create Plant List</a>
+        </div>
+      </li>      
+      <li class="nav-item">
+        <a class="nav-link {% if not g.user %} disabled {% endif %}" href="{% if not g.user %}#{% else %}{{url_for('user_content', user_id=g.user.id)}}{% endif %}">My Content</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav justify-content-end">
+
+    {% if not g.user %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('login')}}">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('signup')}}">Signup</a>
+      </li>
+    {% else %}
+   
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{g.user.username}}'s Garden Shed
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{{url_for('user_profile',user_id=g.user.id)}}">Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
+          </div>
+      </li>
+    {% endif %}
+    </ul>    
+  </div>
+</nav>
+
+<!-- Flash Message -->
+<div class="container">
+  {% for category, message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ category }} my-3">{{ message }}</div>
+  {% endfor %}
+</div>
+  {% block content %}
+  {% endblock %}
+
+
+
+
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+{% block code %}
+{% endblock %}
+</html>

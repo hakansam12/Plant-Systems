@@ -1,0 +1,207 @@
+{% from 'macros.html' import macro_form %}
+{% from 'macros.html' import plot_viewer %}
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Plot Jumbo -->
+<div class="jumbotron jumbotron-fluid text-white" id="plot-show-jumbo">
+    <div class="container text-backdrop-dark">
+        <div class="row pr-4 ">
+            <div class="col">
+
+                <h1 class="display-4">{{plot.name}}</h1>
+                <p class="lead">{% if (plot.description != '' and plot.description != '')  %}
+                    {{plot.description}}
+                    {% else %}
+                    <i>No Description</i>
+                    {% endif %} </p>
+            </div>
+            <div class="col-2 align-self-center">
+                <div class="row justify-content-end">
+                        <form method="GET" action="{{url_for('edit_plot', plot_id=plot.id)}}"><button type="submit" class="btn btn-info mb-3">Edit</button></form>
+                </div>
+                <div class="row justify-content-end">
+                        <form method="POST" action="{{url_for('delete_plot', plot_id=plot.id)}}"><button type="submit" class="btn btn-danger">Delete</button></form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Connections -->
+<div class="container">
+    <h2 class="text-center">Connections</h2>
+    <p class="lead">Add and Remove connections, or easily visit other created content by clicking on the links of connected content.</p>
+    <div class="row">
+        <!-- Connected Projects -->
+        <div class="col-md-6 col-12 border-right">
+            <h5>Connected Projects</h5>
+                <ul id="project-list">
+                {% for project in plot.projects %}
+                    <li data-project-id={{project.id}} data-plot-id={{plot.id}}><a href="{{url_for('show_project', project_id=project.id)}}">{{project.name}}</a><button class="btn btn-sm text-danger proj-rmv-plot-btn"> <i class="fas fa-times"></i></button></li>
+                {% else %}
+                    <li><p>No projects connected yet.</p></li>
+                {% endfor %}
+                </ul>
+            
+
+        </div>   
+        <!-- Connected Plant Lists -->
+        <div class="col-md-6 col-12">
+            <h5>Connected Plant Lists</h5>
+                <ul id="plantlist-list">
+                {% for plantlist in plot.plantlists %}
+                    <li data-plantlist-id={{plantlist.id}} data-plot-id={{plot.id}}><a href="{{url_for('show_plantlist', plantlist_id=plantlist.id)}}">{{plantlist.name}}</a><button class="btn btn-sm text-danger plot-rmv-plntlst-btn"> <i class="fas fa-times"></i></button></li>
+                {% else %}
+                    <li><p>No plant lists connected yet.</p></li>
+                {% endfor %}
+                </ul>
+               
+        </div>   
+    </div>
+    <!-- Show Buttons -->
+    <div class="row align-items-bottom">
+        <div class="col-6 ">
+        <button id="toggle-projects-btn" type="button" data-toggle="modal" data-target="#project-modal" class="btn btn-block btn-outline-info ">Show/Hide Your Other Projects <i class="fas fa-caret-down"></i></button>
+    </div>
+    <div class="col-6">
+        <button id="toggle-plantlists-btn" type="button" data-toggle="modal" data-target="#plantlist-modal" class="btn btn-block btn-outline-info">Show/Hide Your Other Plant Lists<i class="fas fa-caret-down"></i></button>
+    </div>
+    </div>
+</div>
+<!-- Add Forms -->
+<div id="add-forms" class="container" data-plot-id="{{plot.id}}">
+    <div class="row">
+        <!--Projects Form -->
+        <div class="col-6">
+            <form class="mt-4" id="add-projects-form" style="display: none;">
+                {{macro_form(form_project)}}
+                <div class="row">
+                    <div class="col">
+                        <button  class="btn btn-block btn-info">Add Selected Projects to Plot</button>
+                    </div>
+                </div>
+            </form>
+          
+        </div>
+        <!-- Plant lists Form -->
+        <div class="col-6">
+            <form class="mt-4" id="add-plantlists-form" style="display: none;">
+                {{macro_form(form_plantlist)}}
+                <button class="btn btn-block btn-info">Add Selected Plant Lists to Plot</button>
+            </form>
+        </div>
+    </div>
+</div>
+<hr>
+<!-- Plot Viewer -->
+<div class="container mt-5">
+<h2 class="text-center">Plot Viewer</h2>
+    <div class="row justify-content-around">
+        <p><b>Plot Width:</b> {{plot.width}} feet</p>
+        <p><b>Plot Length:</b> {{plot.length}} feet</p>
+        <p><b>Scale:</b> 1 square = 1 sq. ft.</p>
+    </div>
+    <div class="row">
+        <div class="container lawn py-5">
+            {{plot_viewer(plot)}}
+        </div>
+    </div>
+      
+</div>
+
+
+<!-- Design -->
+<div class="container mt-5">
+<h2 class="text-center">Plot Design</h2>
+<p class="lead">Add plants to the plot by selecting any number of individual squares, or full rows and columns, and then clicking the symbol of the plant you want to add. Clear symbols by selecting their squares and clicking 'Remove Selected'.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-12 mb-3">
+            <h3 class="text-center">Plot Editor</h3>
+            <div class="row d-flex justify-content-around">
+                <button id="select-all-btn" class="my-1 btn btn-info">Select All</button>
+                <button id="deselect-all-btn" class="my-1 btn btn-info">Deselect All</button>
+                <button id="remove-selected-btn" class="my-1 btn btn-danger">Remove Selected</button>
+            </div>
+            <hr>
+            <div class="container plot-design plot-cont">
+            {% for row in range(plot.length) %}
+                {% if loop.index == 1 %}
+                <div class="row d-flex justify-content-around">
+
+                    {% for col in range(plot.width +1) %}
+                        {% if loop.index == 1 %}
+                        <div class="col"></div>
+
+                        {% else %}
+
+                        <div  data-col="{{col-1}}" class="col select-col add">
+                        <i class="fas fa-chevron-down"></i>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% endif %}
+
+
+                <div class="row justify-content-center plot-row">
+                    {% for col in range(plot.width) %}
+                    {% if loop.index == 1 %}
+                        <div class="col select-row add d-flex align-items-center">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="col plot-col fa-lg justify-content-center d-flex align-items-center" data-row="{{row}}" data-col="{{col}}">
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        <!-- Plant lists -->
+        <div class="col-lg-4 col-12">
+            <h3 class="text-center">Plant List</h3>
+
+            <label for="plantlists">Pick from connected Plant Lists (list must have at least one plant).</label>
+
+            <select id="plantlist-select" class="form-control" name="plantlists" id="plantlists">
+                    <option value="" disabled selected>Select a plant list...</option>
+                {% for plantlist in plot.plantlists %}
+                    {% if plantlist.plants %}
+                    <option value="{{plantlist.id}}">{{plantlist.name}}</option>
+                    {% endif %}
+                {% endfor %}
+           
+            </select>
+            <p>Edit plant symbols at their respective Plant List page.</p>
+
+            <table id="plant-symbol-table" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Plant</th>
+                        <th scope="col" class="text-center">Symbol</th>
+                    </tr>
+                </thead>
+                <tbody>              
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+{% endblock %}
+{% block code %}
+<script src="/static/query.js"></script>
+<script src="/static/connection.js"></script>
+<script src="/static/showPlotSubform.js"></script>
+<script src="/static/plotDesign.js"></script>
+{% endblock %}
