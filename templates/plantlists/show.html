@@ -124,7 +124,7 @@
             {{img_modal(plant)}}
             </td>
             <td>
-                <div class="containter custom-symbol-cont" data-plant-id="{{plant.id}}" data-plantlist-id="{{plantlist.id}}">
+                <div class="container custom-symbol-cont" data-plant-id="{{plant.id}}" data-plantlist-id="{{plantlist.id}}">
                     {% if plant_symbol_map[plant.id] %}
                     <div id="symbol-display" class="row justify-content-center fa-4x">
                     {{plant_symbol_map[plant.id].symbol |safe}}
@@ -163,7 +163,7 @@
     </table>
 </div>
     {% if not plantlist.plants %}
-<h6 class="text-center">No plants added yet. Add plants by searching <a href="{{url_for('plants_search_table')}}">here</a>, selecting a plant, and adding from its profile page.</h5>    {% endif %}
+<p>class="text-center">No plants added yet. Add plants by searching <a href="{{url_for('plants_search_table')}}">here</a>, selecting a plant, and adding from its profile page.</p>>    {% endif %}
 
 
 </div>

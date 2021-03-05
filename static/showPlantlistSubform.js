@@ -16,6 +16,8 @@ const $plotsForm = $('#add-plots-form');
 const $plotList = $('#plot-list');
 const $projectList = $('#project-list');
 const $modalBody = $('.modal-body');
+const noPlots = 'No plots connected yet.';
+const noProjects = 'No projects connected yet.';
 
 // On click of X btn on connected project
 $('ul').on('click', '.proj-rmv-plntlst-btn', handleRemoveProjectConn);
@@ -99,7 +101,7 @@ function handleAddProjectSubmit(evt) {
 		if (element.name !== 'csrf_token') {
 			Connection.projectAddPlantList(element.value, plantlistId);
 			const optionText = $(`option:selected[value='${element.value}']`).text();
-			if ($projectList.text().includes('No projects connected yet.')) {
+			if ($projectList.text().includes(noProjects)) {
 				$projectList.empty();
 			}
 			$projectList.append(generateLiHtml('project', plantlistId, element.value, optionText));
@@ -120,7 +122,7 @@ function handleAddPlotSubmit(evt) {
 		if (element.name !== 'csrf_token') {
 			Connection.plotAddPlantList(element.value, plantlistId);
 			const optionText = $(`option:selected[value='${element.value}']`).text();
-			if ($plotList.text().includes('No plots connected yet.')) {
+			if ($plotList.text().includes(noPlots)) {
 				$plotList.empty();
 			}
 			$plotList.append(generateLiHtml('plot', plantlistId, element.value, optionText));
