@@ -2,7 +2,7 @@
 Plant Systems is a web application which users can go and create their own projects. They will need to create an account to view more
 data about plants common name, scientific names, and families. It is degisned to provide more hands-on activities to students who learn 
 bilology at schools. 
-
+Try it out today by clicking [here](https://plant-systems.herokuapp.com/)
 
 ## Features
 Users can search through plants based on a variety of filters and view plant specific details including taxonomy, images, distribution, growth specifications, and more. The Trefle database is still in beta so the information is constantly improving.
